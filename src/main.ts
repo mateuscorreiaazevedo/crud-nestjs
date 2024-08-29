@@ -1,11 +1,19 @@
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import env from './utils/env';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(env.PORT);
 
-  console.log(`Application is running on: http://localhost:${env.PORT}`);
+  const config = new DocumentBuilder()
+    .setTitle('API TODO App')
+    .setDescription('')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(env.PORT);
 }
 bootstrap();

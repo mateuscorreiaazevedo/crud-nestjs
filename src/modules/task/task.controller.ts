@@ -16,12 +16,17 @@ import {
   FindByIdTaskRequestDTO,
   TaskDTO,
 } from './task.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('task')
+@ApiTags('Tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Cadastra uma nova tarefa' })
+  @ApiResponse({ status: 201, description: 'Tarefa criada com sucesso' })
+  @ApiResponse({ status: 500, description: 'Erro de servidor' })
   async create(
     @Body() data: CreateTaskRequestDTO,
   ): Promise<CreateTaskResponseDTO> {
@@ -30,6 +35,9 @@ export class TaskController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Retorna todas as tarefas' })
+  @ApiResponse({ status: 200, description: 'Tarefas encontradas com sucesso' })
+  @ApiResponse({ status: 500, description: 'Erro de servidor' })
   async findAll(): Promise<FindAllTasksResponseDTO> {
     const data: TaskDTO[] = [];
     const tasks = await this.taskService.findAll();
@@ -49,6 +57,10 @@ export class TaskController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Retorna uma tarefa por id' })
+  @ApiResponse({ status: 200, description: 'Tarefa encontrada com sucesso' })
+  @ApiResponse({ status: 404, description: 'Tarefa não encontrada' })
+  @ApiResponse({ status: 500, description: 'Erro de servidor' })
   async findById(@Param() data: FindByIdTaskRequestDTO): Promise<TaskDTO> {
     const { id } = data;
     const task = await this.taskService.findById(id);
@@ -62,6 +74,10 @@ export class TaskController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Deleta uma tarefa por id' })
+  @ApiResponse({ status: 200, description: 'Tarefa deletada com sucesso' })
+  @ApiResponse({ status: 404, description: 'Tarefa não encontrada' })
+  @ApiResponse({ status: 500, description: 'Erro de servidor' })
   async delete(
     @Param() data: FindByIdTaskRequestDTO,
   ): Promise<DeleteAndToggleTaskResponseDTO> {
@@ -76,6 +92,13 @@ export class TaskController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Ativa/desativa uma tarefa por id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Tarefa ativada/desativada com sucesso',
+  })
+  @ApiResponse({ status: 404, description: 'Tarefa não encontrada' })
+  @ApiResponse({ status: 500, description: 'Erro de servidor' })
   async toggle(
     @Param() { id }: FindByIdTaskRequestDTO,
   ): Promise<DeleteAndToggleTaskResponseDTO> {
